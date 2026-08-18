@@ -1,0 +1,110 @@
+## Core OS / Editor ignore files
+.DS_Store
+Thumbs.db
+*.localhistory
+
+## IDE / Editor configuration files
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+.vs*
+
+## .NET Core / MSBuild build output & caches
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Tt]emp/
+[Tt]mp/
+*_i.c
+*_p.c
+*.ilk
+*.meta
+*.obj
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.sublime-project
+*.sublime-workspace
+_ReSharper*/
+*.[Re]Sharper.user
+
+## EF Core Migrations & database files
+*.db
+*.db-shm
+*.db-wal
+*.sqlitedb
+App_Data/
+
+## User-specific app configurations
+appsettings.Production.json
+appsettings.Local.json
+appsettings.Development.json
+appsettings.json
+*.userprefs
+*.launchSettings.json.user
+
+## React / Web / Node.js
+node_modules/
+jspm_packages/
+.npm/
+.eslintcache
+.stylelintcache
+yarn-error.log
+pnpm-debug.log*
+.yarn-state.yml
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+## React build output
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+.expo/
+.turbo/
+
+## Environment variables (secret files)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+## Local Data Protection key ring (encrypts MFA secrets at rest)
+Backend/WMS.API/keys/
+
+## Cypress/Test outputs
+cypress/screenshots/
+cypress/videos/
+coverage/
+.nyc_output/
+
+## Docs
+WMS_SRS.md
+srs.md
+RBAC_Details.md
+rbac_pbac_audit.md

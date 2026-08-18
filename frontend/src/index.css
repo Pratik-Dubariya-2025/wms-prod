@@ -1,0 +1,211 @@
+@import "@fontsource/outfit/300.css";
+@import "@fontsource/outfit/400.css";
+@import "@fontsource/outfit/500.css";
+@import "@fontsource/outfit/600.css";
+@import "@fontsource/outfit/700.css";
+@import "tailwindcss";
+
+/* Enable class-based dark mode: `dark:` variants apply under .dark */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Semantic color tokens resolve to CSS variables that flip between light and
+ * dark themes (see :root / .dark below). Accent colors stay constant.
+ */
+@theme {
+  --color-wms-bg: var(--wms-bg);
+  --color-wms-surface: var(--wms-surface);
+  --color-wms-elevated: var(--wms-elevated);
+  --color-wms-border: var(--wms-border);
+  --color-wms-hover: var(--wms-hover);
+  --color-wms-text: var(--wms-text);
+  --color-wms-secondary: var(--wms-secondary);
+  --color-wms-muted: var(--wms-muted);
+
+  --color-wms-indigo: #6366f1;
+  --color-wms-cyan: #06b6d4;
+  --color-wms-emerald: #10b981;
+  --color-wms-success: #10b981;
+  --color-wms-warning: #f59e0b;
+  --color-wms-danger: #ef4444;
+  --color-wms-purple: #8b5cf6;
+
+  --font-sans: 'Outfit', sans-serif;
+  --backdrop-blur-glass: 16px;
+}
+
+/* Light theme (DEFAULT) */
+:root {
+  --wms-bg: #eef2f8;
+  --wms-surface: #ffffff;
+  --wms-elevated: #ffffff;
+  --wms-border: #e2e8f0;
+  --wms-hover: #f1f5f9;
+  --wms-text: #0f172a;
+  --wms-secondary: #475569;
+  --wms-muted: #64748b;
+
+  --wms-body-gradient: radial-gradient(circle at top right, #e0e7ff 0%, #eef2f8 45%, #f8fafc 100%);
+  --wms-glass-bg: rgba(255, 255, 255, 0.7);
+  --wms-glass-border: rgba(15, 23, 42, 0.08);
+  --wms-glass-shadow: 0 10px 30px -12px rgba(15, 23, 42, 0.18);
+  --wms-scroll-track: rgba(15, 23, 42, 0.06);
+  --wms-scroll-thumb: rgba(15, 23, 42, 0.18);
+  --wms-scroll-thumb-hover: rgba(15, 23, 42, 0.3);
+}
+
+/* Dark theme */
+.dark {
+  --wms-bg: #090d16;
+  --wms-surface: #0f172a;
+  --wms-elevated: #131c2e;
+  --wms-border: rgba(255, 255, 255, 0.08);
+  --wms-hover: rgba(255, 255, 255, 0.06);
+  --wms-text: #f8fafc;
+  --wms-secondary: #94a3b8;
+  --wms-muted: #64748b;
+
+  --wms-body-gradient: radial-gradient(circle at top right, #1e1b4b 0%, #0f172a 50%, #090d16 100%);
+  --wms-glass-bg: rgba(15, 23, 42, 0.45);
+  --wms-glass-border: rgba(255, 255, 255, 0.08);
+  --wms-glass-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+  --wms-scroll-track: rgba(0, 0, 0, 0.2);
+  --wms-scroll-thumb: rgba(255, 255, 255, 0.1);
+  --wms-scroll-thumb-hover: rgba(255, 255, 255, 0.2);
+}
+
+@layer base {
+  body {
+    @apply bg-wms-bg font-sans text-wms-text min-h-screen antialiased;
+    background-image: var(--wms-body-gradient);
+    background-attachment: fixed;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Hide number input spinners globally (Chrome, Safari, Edge, Firefox) */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
+
+/* Custom Scrollbar styled with standard styles */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--wms-scroll-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--wms-scroll-thumb);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--wms-scroll-thumb-hover);
+}
+
+/* Tailwind utility extensions */
+@layer utilities {
+  .glass-card {
+    background: var(--wms-glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--wms-glass-border);
+    box-shadow: var(--wms-glass-shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      border-color: rgba(99, 102, 241, 0.3);
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+    }
+  }
+}
+
+@utility secured-field-blurred {
+  filter: blur(4px);
+  user-select: none;
+  cursor: help;
+  position: relative;
+
+  &::after {
+    content: 'RESTRICTED';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 8px;
+    letter-spacing: 1px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(0, 0, 0, 0.7);
+    padding: 2px 4px;
+    border-radius: 3px;
+    pointer-events: none;
+  }
+}
+
+/* Modal Animations */
+@keyframes slideDown {
+  from {
+    transform: translateY(-60px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-60px) scale(0.95);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.25s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.2s ease-in forwards;
+}

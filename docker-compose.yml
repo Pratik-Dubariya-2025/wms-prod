@@ -1,0 +1,90 @@
+# Explicit project name so image/network names are valid and identical on any
+# machine, independent of the checkout folder name.
+name: ${COMPOSE_PROJECT_NAME:-wms}
+
+services:
+  # --- SQL Server 2022 ---------------------------------------------------
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: ${COMPOSE_PROJECT_NAME:-wms}-db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD}"
+      MSSQL_PID: "${MSSQL_SA_PID}"
+    volumes:
+      - wms-mssql-data:/var/opt/mssql
+    healthcheck:
+      # Reports healthy only once the engine accepts logins, so api waits for it.
+      test: [ "CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q \"SELECT 1\" || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  # --- Redis Distributed Cache ------------------------------------------
+  cache:
+    image: redis:7-alpine
+    container_name: ${COMPOSE_PROJECT_NAME:-wms}-cache
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass "${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}" --appendonly yes
+    volumes:
+      - wms-redis-data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # --- .NET 9 Web API ----------------------------------------------------
+  api:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    image: ${COMPOSE_PROJECT_NAME:-wms}-api
+    container_name: ${COMPOSE_PROJECT_NAME:-wms}-api
+    environment:
+      ASPNETCORE_URLS: "http://+:8080"
+      # Overrides appsettings.json; points at the db and cache service. EF migrations are
+      # applied automatically on startup (see Program.cs).
+      ConnectionStrings__DefaultConnection: "${CONNECTION_STRING}"
+      ConnectionStrings__RedisConnection: "cache:6379,password=${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}"
+      JwtSettings__Secret: "${JWTSETTINGS_SECRET}"
+      JwtSettings__Issuer: "${JWTSETTINGS_ISSUER}"
+      JwtSettings__Audience: "${JWTSETTINGS_AUDIENCE}"
+      JwtSettings__ExpiryInMinutes: "${JWTSETTINGS_EXPIRY_IN_MINUTES}"
+      AllowedOrigins__0: "${ALLOWED_ORIGIN}"
+      SmtpSettings__Host: "${SMTP_HOST}"
+      SmtpSettings__Port: "${SMTP_PORT}"
+      SmtpSettings__Username: "${SMTP_USERNAME}"
+      SmtpSettings__Password: "${SMTP_PASSWORD}"
+      SmtpSettings__EnableSsl: "${SMTP_ENABLE_SSL:-true}"
+      SmtpSettings__SenderName: "${SMTP_SENDER_NAME:-Workspace Management System}"
+      SmtpSettings__SenderEmail: "${SMTP_SENDER_EMAIL}"
+      # Mounted below so encrypted MFA secrets survive container restarts/redeploys.
+      DataProtection__KeysPath: "/keys"
+    volumes:
+      - wms-dataprotection-keys:/keys
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+
+  # --- React SPA (built, served by nginx) --------------------------------
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: "${VITE_API_BASE_URL:-/api}"
+    image: ${COMPOSE_PROJECT_NAME:-wms}-web
+    container_name: ${COMPOSE_PROJECT_NAME:-wms}-web
+    depends_on:
+      - api
+
+volumes:
+  wms-mssql-data:
+  wms-redis-data:
+  wms-dataprotection-keys:

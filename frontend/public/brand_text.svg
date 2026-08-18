@@ -1,0 +1,51 @@
+<svg width="105" height="30" viewBox="0 0 105 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- "Workspace" Title -->
+  <text
+    x="0"
+    y="16"
+    fill="#f8fafc"
+    font-family="Outfit, system-ui, -apple-system, sans-serif"
+    font-size="19"
+    font-weight="700"
+    letter-spacing="-0.02em"
+  >
+    Workspace
+  </text>
+
+  <!-- Left Line -->
+  <line
+    x1="0"
+    y1="24"
+    x2="10"
+    y2="24"
+    stroke="#06b6d4"
+    stroke-width="0.8"
+    opacity="0.6"
+    stroke-linecap="round"
+  />
+
+  <!-- "MANAGEMENT SYSTEM" Subtitle -->
+  <text
+    x="13.5"
+    y="26"
+    fill="#06b6d4"
+    font-family="Outfit, system-ui, -apple-system, sans-serif"
+    font-size="5"
+    font-weight="700"
+    letter-spacing="0.16em"
+  >
+    MANAGEMENT SYSTEM
+  </text>
+
+  <!-- Right Line -->
+  <line
+    x1="94"
+    y1="24"
+    x2="104"
+    y2="24"
+    stroke="#06b6d4"
+    stroke-width="0.8"
+    opacity="0.6"
+    stroke-linecap="round"
+  />
+</svg>
